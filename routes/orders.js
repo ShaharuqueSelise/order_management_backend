@@ -66,6 +66,7 @@ async function calculateDiscount(productId, quantity) {
       startDate: { [Op.lte]: new Date() },
       endDate: { [Op.gte]: new Date() },
     },
+    include: [{ model: PromotionSlab, as: 'slabs' }]
   });
 
   console.log(promotions);
@@ -75,6 +76,7 @@ async function calculateDiscount(productId, quantity) {
   for (const promo of promotions) {
     let discount = 0;
     const totalWeight = product.weight * quantity;
+    console.log(totalWeight,'totalWeight')
 
     switch (promo.discountType) {
       case "percentage":
@@ -103,6 +105,22 @@ async function calculateDiscount(productId, quantity) {
             discount = slab.discountPerUnit * quantity;
           }
         }
+        // const slab = PromotionSlab.findAll({
+        //   where: {
+        //     promotionId: promo.id,
+        //     minWeight: {
+        //       [Op.lte]: totalWeight,
+        //     },
+        //     maxWeight: {
+        //       [Op.gte]: totalWeight,
+        //     },
+        //   },
+        // });
+        // console.log(slab, 'slab')
+        // if (slab) {
+        //   discount = slab.discountPerUnit * quantity;
+        // }
+        
         break;
     }
 
@@ -172,6 +190,7 @@ router.post("/create/order", authMiddleware, async (req, res) => {
       orderItems.map((item) => ({
         ...item,
         orderId: order.id,
+        customerId: req.user.id,
       }))
     );
 

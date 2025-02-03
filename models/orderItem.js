@@ -6,6 +6,7 @@ const OrderItem = sequelize.define("OrderItem", {
     unitPrice: DataTypes.FLOAT,
     discount: DataTypes.FLOAT,
     totalPrice: DataTypes.FLOAT,
+    customerId: DataTypes.INTEGER,
     orderId: {
       type: DataTypes.INTEGER,
       references: {
